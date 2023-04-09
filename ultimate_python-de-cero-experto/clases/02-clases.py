@@ -1,6 +1,6 @@
 
 class Perro: 
-  def habla(self):  # El parámetro self es simplemente una forma de referirse al objeto actual dentro de la definición de la clase.
+  def habla(self):  # Self es una convencion, Todos los metodos tienen que tenerlo. Tambien es el equivalente a `.This` de javascript
     print('Guau')
     
 mi_perro = Perro() 
