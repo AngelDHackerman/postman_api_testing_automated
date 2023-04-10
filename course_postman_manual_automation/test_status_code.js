@@ -1,6 +1,11 @@
 
 // ? These scripts are meant to be used in Postman 
 
+// Save the authorization token when asking to register a new API client: 
+
+var jsonData = JSON.parse(responseBody); // Analizar la respuesta JSON
+pm.globals.set("AuthorizationToken", jsonData.accessToken) // Asignar el token a la variable global "access_token"
+
 // For Status code 200 "OK", (GET method)
 
 pm.test("Status code is 200 OK", () => { 
@@ -15,24 +20,15 @@ pm.test("Status code is 201 (created)", () => {
 })
 
 
-// For status code 204 "Update", (PATCH method) 
+// For status code 204 "Update", (PATCH, DELETE method) 
 
 pm.test("Status code is 204, Item successfully updated", () => { 
   pm.response.to.have.status(204); 
 });
 
-// Extrayendo el numero del codigo del error: 
-
-pm.test("Status code is 201 (created)", () => { 
-  let res = pm.response.status;
-  if (res != 201) { 
-      console.log(pm.response.code, pm.response.status)  // * en lugar de response.status, usamos response.code
-  } else { 
-      console.log(res)
-  }
-
-  pm.response.to.have.status(201);
-})
+pm.test("Status code is 204, Item successfully deleted", () => { 
+  pm.response.to.have.status(204); 
+});
 
 
 
