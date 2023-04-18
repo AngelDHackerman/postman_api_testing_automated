@@ -11,3 +11,7 @@ answer = s.recv(1024) # Se recibe la respuesta del servidor, con un tamaño máx
 print(answer) 
 
 s.close()
+
+# We can use this script to find out what application, 
+# version, and operating system are running at that 
+# IP address and port. 
