@@ -64,5 +64,41 @@ hasta que el "welcome message" desaparece. El largo de la contraseña en este la
 
 6) Aqui debemos usar el intruder de burp suite con este link: https://portswigger.net/web-security/sql-injection/blind/lab-conditional-responses
 
-3au9
+3au9axicawvbbem1f477
 
+
+
+
+
+        --> Lab: Blind SQL injection with conditional errors
+
+1) Datos y end goal: 
+
+-> La pagina tiene una vulnerabilidad SQL injection que puede ser explotada atravez de las cookies
+
+-> La aplicacion no regresa ningun mensaje independientemente del query que le mandemos. Si el SQL
+command causa un error, nos regresara un custome error message. 
+
+-> La pagina contiene una tabla llamada "users" con 2 columnas "username" y "password", necesitamos averiguar la contraseña del 
+usuario "Administrador". 
+
+2) URL del lab: https://portswigger.net/web-security/sql-injection/blind/lab-conditional-errors
+
+3) Usando burp suite y foxy proxy activamos el "internceptor" en la welcome page. Se sabe que el "trackID" de las cookies es vulnerable. 
+
+4) Verificando si es vulenrable a SQL injection: 
+
+En burp suite tenemos el siguente fragmento:
+
+  Cookie: TrackingId=i5Ar0xbNkgVZGzzzYYY;
+
+si le agregamos una ' asi: 
+
+  Cookie: TrackingId=i5Ar0xbNkgVZGzzzYYY';  
+
+y recibimos un 500 error (internal error) es muy probable que esa entrada sea vulnerable a SQL injection. 
+
+5) Verificando indice por indice del "password" del user "administrator" de la tabla "users" genera un SQL error, 
+Si la condicion: (username%3d'Administrator'+AND+SUBSTRING(Password,1,1)>'a') es "True" generara el error SQL de "division_by_zero"
+
+Cookie: TrackingId=i5Ar0xbNkgVZGzzzYYY'+AND+(SELECT+CASE+WHEN+(username%3d'Administrator'+AND+SUBSTRING(Password,1,1)>'a')+THEN+TO_CHAR(1/0)+ELSE+'a'+END+FROM+Users)%3d'a;
