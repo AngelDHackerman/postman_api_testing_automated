@@ -1,0 +1,36 @@
+
+
+Como usar Burp intruder aqui esta este lab que lo indica muy bien: 
+
+https://portswigger.net/web-security/sql-injection/blind/lab-conditional-responses
+
+
+          --> Lab: Blind SQL injection with conditional responses
+
+-> End gol: 
+
+login as the administator user.
+
+-> Steps to follow: 
+
+using a blind sql injection with the trackingID for the cookies look for the table "users"
+and then guess using the tables "username" and "password" guess the Administrator password. 
+
+1) Enter the lab, then on the welcome page turn on the foxy proxy 
+
+2) in the welcome page send the url to the repeter and to the burp intruder
+
+
+-> En el repeter de burp suite esta:
+
+    Cookie: TrackingId=uzXff1VVIKHXZYZZ;
+
+A eso le agregamos: 
+
+Cookie: TrackingId=uzXff1VVIKHXZYZZ'+AND+'1'%3d'1; 
+
+y si nos devuelve el "Welcome back" message que aparece en el home page del lab 
+significa que la pagina es vulnerable a Blind SQL injection. 
+
+
+
