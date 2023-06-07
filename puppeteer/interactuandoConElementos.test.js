@@ -25,7 +25,7 @@ describe('Interactuando con elementos de la pagina', () => {
 
     // abriendo la pagina de guru.com
     await page.goto('https://demo.guru99.com/test/simple_context_menu.html')
-    await new Promise(resolve => setTimeout(resolve, 1000))  // tiempo de espera de 0.5 seg
+    await new Promise(resolve => setTimeout(resolve, 1000))  // tiempo de espera de 1 seg
 
     // click derecho
     // hacemos click derecho con un dealy de 0.5 seg
