@@ -83,4 +83,27 @@ describe('web scrapping, extrayendo informacion', () => {
         await browser.close()
 
     }, 90000);
+
+
+    // Contando el numero de imagenes en el landing page de Platzi.com
+
+    it('hola', async () => { 
+        const browser = await puppeteer.launch({
+            headless: false,
+            defaultViewport: null,
+            devtools: true
+        });
+
+        const page = await browser.newPage()
+
+        await page.goto('https://platzi.com', { waitUntil: 'networkidle0'})
+
+        // Contando el numero de imagenes en la landing page de platzi.com
+        // $$eval() corre un querySelectorAll, es decir buscara todas las coincidencias. 
+        const images = await page.$$eval('img', (imagenes) => imagenes.length)
+        console.log('imagenes: ', images)
+
+
+        await browser.close()
+    }, 90000);
 })
