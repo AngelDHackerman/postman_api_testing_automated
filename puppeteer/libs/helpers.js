@@ -47,5 +47,13 @@ module.exports = {
     },
 
     // getCount, contando el numero de ciertos elementos en una pagina 
-    
+    getCount: async function (page, selector, opts = {}) { 
+        try { 
+            await page.waitForSelector(selector)
+            // $$eval, es un getQueryAll tomara todos los elementos con el "selector" y luego devolvera el "length" de todos los elementos que coincida
+            return await page.$$eval(selector, (elementos) => elementos.length)
+        } catch (err) { 
+            throw new Error(`Error al escribir en el selector: ${selector}`)
+        }
+    }
 }
