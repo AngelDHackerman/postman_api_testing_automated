@@ -1,5 +1,9 @@
 const puppeteer = require('puppeteer');
 
+// usando la libreria "helpers" 
+
+const {getCount, getText} = require('../lib/helpers')
+
 describe('web scrapping, extrayendo informacion', () => {
 
     it('Extrae el titulo de la pagina y la URL', async() => { 
@@ -45,40 +49,13 @@ describe('web scrapping, extrayendo informacion', () => {
 
         // $eval, correra el metodo (document.querySelector)
         // El callback de $eval, devolvera el texto contenido en el boton. 
-        const nombreBoton = await page.$eval('#Header-v2 > nav.Nav-header.Nav-header-mobileCtas > div.Menu > div > div > ul > li:nth-child(8) > a', (button) => button.textContent)
-        console.log('Nombre Del Boton: ',nombreBoton)
 
-        // Extrayendo la info por XPath 
-
-        // La función $x() de Puppeteer se utiliza para seleccionar elementos en la página utilizando la sintaxis XPath.
-        // Esta línea de código selecciona el primer elemento que coincide con el XPath proporcionado y lo devuelve en un array.
-        const [nombreBoton2] = await page.$x('//*[@id="Header-v2"]/nav[1]/div[2]/div/div/ul/li[5]/a')
-
-        // Una vez que tienes el elemento, puedes usar el método getProperty() para obtener una de sus propiedades.
-        // En este caso, estás obteniendo la propiedad 'textContent', que contiene el texto del elemento.
-        const propiedad = await nombreBoton2.getProperty('textContent')
-
-        // getProperty() devuelve un objeto JSHandle, que es una referencia a un objeto en el navegador.
-        // Para obtener el valor real de la propiedad, puedes usar el método jsonValue() en el objeto JSHandle.
-        // Esto devuelve una promesa que se resuelve con el valor de la propiedad 'textContent'.
-        const texto = await propiedad.jsonValue()
-
-        console.log('Nombre Del Boton 2: ', texto)
+        // usando parte de nuestra libreria, getText(): 
+        const nombreBoton = await getText(page, '#Header-v2 > nav.Nav-header.Nav-header-mobileCtas > div.Menu > div > div > ul > li:nth-child(8) > a')
+        console.log('Nombre Del Boton: ', nombreBoton)
 
 
-        // Segunda forma
 
-        // page.evaluate() te permite ejecutar una función en el contexto del navegador y obtener el resultado. 
-        // En este caso, estás utilizando page.evaluate() para obtener el contenido de texto de un elemento.
-        const texto2 = await page.evaluate((name) => name.textContent, nombreBoton2)
-        console.log('Nombre de Boton 2 segunda forma: ', texto2)
-
-
-        // Tercera forma 
-
-        const button3  = await page.waitForXPath('//*[@id="Header-v2"]/nav[1]/div[2]/div/div/ul/li[5]/a')
-        const texto3 = await page.evaluate((name) => name.textContent, button3)
-        console.log('Texto 3: ', texto3)
         
         await browser.close()
 
@@ -100,8 +77,10 @@ describe('web scrapping, extrayendo informacion', () => {
 
         // Contando el numero de imagenes en la landing page de platzi.com
         // $$eval() corre un querySelectorAll, es decir buscara todas las coincidencias. 
-        const images = await page.$$eval('img', (imagenes) => imagenes.length)
-        console.log('imagenes: ', images)
+        
+        // Usando el metodo getCount de la liberia "helpers"
+        const images = await getCount(page,'img')
+        console.log('Contando Las Imagenes: ', images)
 
 
         await browser.close()
