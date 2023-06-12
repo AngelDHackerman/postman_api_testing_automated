@@ -47,7 +47,7 @@ describe('Visual Testing', () => {
     it ('Snapshot de solo 1 elemento', async () => { 
         
         const image = await page.waitForSelector('img')
-        const screenshot = await page.screenshot() 
+        const screenshot = await image.screenshot() 
 
         expect(screenshot).toMatchImageSnapshot({ 
             failureThreshold: 0.05,  // Margen de error que el match puede tener
