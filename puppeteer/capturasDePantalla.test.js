@@ -66,7 +66,13 @@ describe('Capturas de Pantalla', () => {
 
     it ('Captura de pantalla a un solo elemento', async () => { 
 
+        // Eligiendo el elemento que queremos capturar: 
+        const elemento = await page.waitForSelector('body > div.L3eUgb > div.o3j99.ikrT4e.om7nvf > form > div:nth-child(1)')
 
+        // Ejecutando la captura del elemento: 
+        await elemento.screenshot({ 
+            path: './capturaDePantallaElemento.png', 
+        })
         new Promise(resolve => setTimeout(resolve, timeDelay))
     })
     
