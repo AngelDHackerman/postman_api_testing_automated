@@ -29,7 +29,7 @@ describe('Accesibilidad', () => {
 
         // Creando el snapshot para accesibilidad
         const snapshot = await page.accessibility.snapshot()
-        console.log(snapshot)
+        console.log(snapshot)  // Muestra los detalles de accesbilidad que tiene la pagina testeada
 
         new Promise(resolve => setTimeout(resolve, timeDelay))
     });
