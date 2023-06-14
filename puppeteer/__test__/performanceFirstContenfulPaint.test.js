@@ -42,7 +42,6 @@ describe('Performance test', () => {
         console.group('First Contentful Paint : ')
             console.log('First Contentful Paint: ', firstContentfulPaint)
         console.timeEnd()
-        
 
         new Promise(resolve => setTimeout(resolve, timeDelay))
     });
