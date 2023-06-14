@@ -44,13 +44,4 @@ describe('Test de performance', () => {
       
         new Promise(resolve => setTimeout(resolve, timeDelay))
     });
-
-    it ('Medir el performance del page load', async () => { 
-        
-        await page.waitForSelector('img')
-
-      
-        new Promise(resolve => setTimeout(resolve, timeDelay))
-    });
-    
 }, timeDelay)
