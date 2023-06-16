@@ -62,4 +62,17 @@ export default class BasePage {
           throw new Error (`Error al escribir en el selector ${selector}`)
       }
   }
+
+  async doubleClick( selector ) { 
+      try {
+          await page.waitForSelector(selector)
+          await page.click(selector, {clickCount: 2 })
+      } catch (e) {
+          throw new Error (`Error al escribir en el selector ${selector}`)
+      }
+  }
+
+  async wait (time) { 
+      return page.waitForTimeout(time)
+  }
 }
