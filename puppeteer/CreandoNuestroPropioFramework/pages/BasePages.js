@@ -12,7 +12,7 @@ export default class BasePage {
   async getText (selector) { 
       try {
           await page.waitForSelector(selector)
-          return await page.$eval(selector, (el) => el.textContext)
+          return await page.$eval(selector, (el) => el.textContent)
       } catch (e) {
           throw new Error (`Error al obtener el texto del selector ${selector}`)
       }
@@ -54,10 +54,10 @@ export default class BasePage {
       }
   }
 
-  async type ( selector, test, opt = {} ) { 
+  async type ( selector, text, opt = {} ) { 
       try { 
           await page.waitForSelector(selector)
-          await page.type(selector, textContext.opt)
+          await page.type(selector, text, opt)
       } catch (e) { 
           throw new Error (`Error al escribir en el selector ${selector}`)
       }
@@ -68,7 +68,7 @@ export default class BasePage {
           await page.waitForSelector(selector)
           await page.click(selector, {clickCount: 2 })
       } catch (e) {
-          throw new Error (`Error al escribir en el selector ${selector}`)
+          throw new Error (`Error al hacer click en el selector ${selector}`)
       }
   }
 
