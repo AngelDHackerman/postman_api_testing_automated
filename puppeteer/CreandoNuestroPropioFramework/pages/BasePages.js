@@ -1,3 +1,6 @@
+// Uno de los beneficios de jest-puppeteer: no tenemos que estar pasando el page
+// como un parametro en nuestra funcion o en nuestro metodo
+
 
 export default class BasePage { 
 
@@ -73,6 +76,6 @@ export default class BasePage {
   }
 
   async wait (time) { 
-      return page.waitForTimeout(time)
+      return new Promise (r => setTimeout(r, time))
   }
 }
