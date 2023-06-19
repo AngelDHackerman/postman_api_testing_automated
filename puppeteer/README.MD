@@ -126,4 +126,26 @@ module.exports = {
 };
 ```
 
-**********************************************Por ultimo se crea la carpeta de los test********************************************** `touch __test__`
+**********************************************Por ultimo se crea la carpeta de los test********************************************** `touch test`
+
+**************************************Y en el archivo package.json modificar la siguiente linea:************************************** 
+
+```jsx
+"scripts": {
+    "test": "jest --forceExit"
+  },
+```
+
+# Framework BDD con Gherkin, CodeceptJs para pruebas E22 (end to end)
+
+- `npm init -y`
+- `npx create-codeceptjs .`
+- `npm install codeceptjs puppeteer --save`
+- `npx codeceptjs init`
+- `npx condeceptjs gherkin:init`
+- 
+
+<aside>
+🥷🏻 Edited and Created by an AI and Angel Hackerman at @Angel_Hackerman
+
+</aside>
